@@ -30,6 +30,8 @@ reg [4:0] alarm_hours;
 reg [5:0] alarm_mins;
 reg [5:0] alarm_secs;
 reg start;
+reg stop;
+reg stopwatch;
 reg set_hours;
 reg set_mins;
 reg set_secs;
@@ -48,6 +50,8 @@ clock uut (
     .alarm_mins(alarm_mins),
     .alarm_secs(alarm_secs),
     .start(start),
+    .stop(stop),
+    .stopwatch(stopwatch),
     .set_hours(set_hours),
     .set_mins(set_mins),
     .set_secs(set_secs),
@@ -68,11 +72,13 @@ initial begin
     #10;
     reset = 0;
     start=0;
+    stop=0;
+    stopwatch =0;
  #100;
   set_alarm = 1;
   #10;
   set_hours=1;
-    alarm_hours = 4'b0001;
+    alarm_hours = 4'b0000;
     #10;
     set_hours=0;
     #20;
@@ -88,7 +94,18 @@ initial begin
     #10;
     set_alarm=0;
     start=1;
-    #40000000;
+    #4000;
+    start=0;
+    #20;
+    reset=1;
+    #20;
+    reset=0;
+    #20;
+    stopwatch=1;
+    #4000;
+    stop=1;
+    #200;
+    
  $finish;
     
 end

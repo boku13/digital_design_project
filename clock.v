@@ -26,7 +26,9 @@ module clock(
     input  [4:0] alarm_hours,   // Input for setting the alarm hours
     input  [5:0] alarm_mins,    // Input for setting the alarm minutes
     input  [5:0] alarm_secs,
-    input start,   
+    input start, 
+    input stop,  
+    input stopwatch,
     input  set_hours,       // Input to indicate loading hours
     input  set_mins,        // Input to indicate loading minutes
     input  set_secs,   
@@ -40,7 +42,8 @@ module clock(
 reg [4:0] alarm_hours_reg;
 reg [5:0] alarm_mins_reg;
 reg [5:0] alarm_secs_reg;
-
+reg [5:0] last_mins;
+reg [5:0] last_secs;
 always @(*) begin
     alarm_hours_reg = set_alarm && set_hours? alarm_hours : alarm_hours_reg;
     alarm_mins_reg = set_alarm && set_mins? alarm_mins : alarm_mins_reg;
@@ -49,11 +52,13 @@ end
 
 
 // Counter for seconds
-always @(posedge clk or posedge reset) begin
+always @(posedge clk or posedge reset) 
+begin
     if (reset) begin
         secs <= 6'b000000; 
         mins<=6'b000000;
         hours<=5'b00000; 
+        
   // Reset seconds to 0
     end 
     else if(start)
@@ -93,11 +98,40 @@ always @(posedge clk or posedge reset) begin
         end
         
         
-        
-        
+         
         end
     end
+   
+   else if (stopwatch && !stop) begin // 
+       // secs<=6'b000000;
+        //mins=6'b000000;
+       if (secs == 6'b111011) begin
+            secs <= 6'b000000;
+            if (mins == 6'b111011) begin
+               mins <= 6'b000000;
+            end
+            else begin
+                mins <= mins + 1;
+            end
+        end
+        else begin
+            secs <= secs + 1;
+        end
+        last_mins <= mins;
+        last_secs <= secs;
+    end
+    
+    else if (stopwatch && stop) begin
+        // Freeze the clock display at the last value before stop
+    
+        mins <= last_mins;
+        secs <= last_secs + 2'b01;
+        
+    end
+   
+   
 end
+endmodule
 
 // Assign current time values to outputs
 //always @* begin
@@ -112,6 +146,6 @@ end
 //        buzzer <= 0; // Deactivate the buzzer
 //    end
 //end
-endmodule
+
 
 
