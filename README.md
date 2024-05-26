@@ -1,3 +1,7 @@
 # Digital Design Course Project
 --------------------
-Digital Clock
+Digital Clock FSM with the functionalities:
+
+- Alarm
+- StopWatch
+- Timer
