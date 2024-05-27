@@ -3,5 +3,5 @@
 Digital Clock FSM with the functionalities:
 
 - Alarm
-- StopWatch
+- Stopwatch
 - Timer
